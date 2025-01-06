@@ -15,7 +15,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get("https://iflab-logbook-backend.onrender.com/profile", {
+        const response = await axios.get("https://iflab-logbook-backend.onrender.com/users/profile", {
           withCredentials: true,
         });
         setUserData(response.data.user || {});
