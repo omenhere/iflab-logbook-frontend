@@ -32,7 +32,7 @@ const Login = ({ setIsLoggedIn }) => {
       );
 
       // Cek respons untuk memastikan login berhasil
-      if (response.data && response.data.success) {
+      if (response.data && response.data.user) {
         const { name } = response.data.user; // Ambil data pengguna dari respons
 
         // Simpan data pengguna di localStorage
