@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import {
   AppBar,
   Toolbar,
@@ -19,7 +20,6 @@ import {
   Logout as LogoutIcon,
 } from "@mui/icons-material";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { logout } from "../services/api";
 
 const Layout = ({ setIsLoggedIn }) => { // Tambahkan setIsLoggedIn sebagai prop
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
@@ -36,10 +36,19 @@ const Layout = ({ setIsLoggedIn }) => { // Tambahkan setIsLoggedIn sebagai prop
 
   const handleLogout = async () => {
     try {
-      await logout(); // Logout dari backend
-      localStorage.removeItem("name"); // Hapus data dari Local Storage
-      setIsLoggedIn(false); // Update status login
-      navigate("/login"); // Redirect ke halaman login
+      // Panggil endpoint logout
+      await axios.post("https://iflab-logbook-backend.onrender.com/logout", {}, {
+        withCredentials: true, // Pastikan cookie dikirimkan
+      });
+  
+      localStorage.removeItem("name"); // Hapus data nama atau informasi pengguna lain
+    
+  
+      // Update status login
+      setIsLoggedIn(false);
+  
+      // Redirect ke halaman login
+      navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
       alert("Logout failed. Please try again.");
