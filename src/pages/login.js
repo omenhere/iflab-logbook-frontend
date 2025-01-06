@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { login } from "../services/api"; // Import fungsi login
-import axios from "axios"; // Untuk memanggil API getUser
+import axios from "axios"; // Untuk memanggil API
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -23,22 +22,35 @@ const Login = ({ setIsLoggedIn }) => {
     setError("");
 
     try {
-      // Kirim data login ke backend
-      await login(credentials);
+      // Kirim data login ke endpoint backend
+      const response = await axios.post(
+        "https://iflab-logbook-backend.onrender.com/login",
+        credentials,
+        {
+          withCredentials: true, // Kirim cookie bersama permintaan
+        }
+      );
 
-      // Ambil data pengguna dari endpoint /users/profile
-      const response = await axios.get("https://iflab-logbook-backend.onrender.com/users/profile", {
-        withCredentials: true, // Kirim cookie dengan permintaan
-      });
+      // Cek respons untuk memastikan login berhasil
+      if (response.data && response.data.success) {
+        const { name } = response.data.user; // Ambil data pengguna dari respons
 
-      const { name } = response.data.user;
-      localStorage.setItem("name", name); // Simpan data pengguna di localStorage
+        // Simpan data pengguna di localStorage
+        localStorage.setItem("name", name);
 
-      setIsLoggedIn(true); // Perbarui state isLoggedIn
-      navigate("/dashboard"); // Redirect ke dashboard
+        // Perbarui state isLoggedIn
+        setIsLoggedIn(true);
+
+        // Redirect ke dashboard
+        navigate("/dashboard");
+      } else {
+        throw new Error("Invalid login credentials");
+      }
     } catch (error) {
       console.error("Login failed:", error);
-      setError("Login failed. Please check your credentials.");
+      setError(
+        error.response?.data?.message || "Login failed. Please check your credentials."
+      );
     } finally {
       setLoading(false);
     }
