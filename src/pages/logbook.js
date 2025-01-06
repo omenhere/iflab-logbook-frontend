@@ -72,7 +72,7 @@ const LogbookPage = () => {
       return;
     }
     try {
-      await axios.post("https://iflab-logbook-backend.onrender.com/logbooks/", newLogbook, {
+      await axios.post("https://iflab-logbook-backend.onrender.com/logbooks", newLogbook, {
         withCredentials: true,
       });
       setSnackbarMessage("Logbook added successfully!");
@@ -178,14 +178,6 @@ const LogbookPage = () => {
             Logbooks
           </Typography>
 
-          <TextField
-            label="Search Activity"
-            variant="outlined"
-            fullWidth
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            sx={{ marginBottom: 3 }}
-          />
 
           <Button
             variant="contained"
