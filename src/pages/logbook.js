@@ -22,30 +22,29 @@ import {
 import { Edit, Delete } from "@mui/icons-material";
 
 const LogbookPage = () => {
-  const [logbooks, setLogbooks] = useState([]); // State untuk menyimpan logbooks
-  const [loading, setLoading] = useState(false); // State untuk status loading
-  const [openAddModal, setOpenAddModal] = useState(false); // State untuk modal tambah data
-  const [openEditModal, setOpenEditModal] = useState(false); // State untuk modal edit data
+  const [logbooks, setLogbooks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [openAddModal, setOpenAddModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
   const [newLogbook, setNewLogbook] = useState({
     start_date: "",
     end_date: "",
     activity: "",
     pic: "",
     status: "pending",
-  }); // State untuk form tambah data
-  const [currentLogbook, setCurrentLogbook] = useState(null); // State untuk logbook yang sedang diedit
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // State untuk snackbar
-  const [snackbarMessage, setSnackbarMessage] = useState(""); // Pesan snackbar
-  const [searchTerm, setSearchTerm] = useState(""); // Pencarian
+    supporting_evidence: "",
+  });
+  const [currentLogbook, setCurrentLogbook] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const picOptions = ["ARN", "ABY", "TPR", "NKR", "INY", "NMM", "MGD", "MNI", "NAF"];
 
-  // Fungsi untuk menutup snackbar
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
 
-  // Fungsi untuk mengambil data logbooks
   const fetchLogbooks = async () => {
     try {
       setLoading(true);
@@ -64,10 +63,17 @@ const LogbookPage = () => {
     fetchLogbooks();
   }, []);
 
-  // Fungsi untuk menambahkan logbook baru
   const handleAddLogbook = async () => {
     if (!newLogbook.start_date || !newLogbook.end_date || !newLogbook.activity || !newLogbook.pic) {
-      setSnackbarMessage("Please fill all fields!");
+      setSnackbarMessage("Please fill all required fields!");
+      setSnackbarOpen(true);
+      return;
+    }
+    if (
+      newLogbook.supporting_evidence &&
+      !isValidURL(newLogbook.supporting_evidence)
+    ) {
+      setSnackbarMessage("Invalid Google Drive link!");
       setSnackbarOpen(true);
       return;
     }
@@ -84,6 +90,7 @@ const LogbookPage = () => {
         activity: "",
         pic: "",
         status: "pending",
+        supporting_evidence: "",
       });
       fetchLogbooks();
     } catch (error) {
@@ -93,7 +100,6 @@ const LogbookPage = () => {
     }
   };
 
-  // Fungsi untuk membuka modal edit
   const handleOpenEditModal = (logbook) => {
     if (!logbook.id) {
       setSnackbarMessage("Logbook ID is missing.");
@@ -104,7 +110,6 @@ const LogbookPage = () => {
     setOpenEditModal(true);
   };
 
-  // Fungsi untuk menyimpan perubahan
   const handleEditLogbook = async () => {
     if (
       !currentLogbook.start_date ||
@@ -112,13 +117,21 @@ const LogbookPage = () => {
       !currentLogbook.activity ||
       !currentLogbook.pic
     ) {
-      setSnackbarMessage("Please fill all fields!");
+      setSnackbarMessage("Please fill all required fields!");
+      setSnackbarOpen(true);
+      return;
+    }
+    if (
+      currentLogbook.supporting_evidence &&
+      !isValidURL(currentLogbook.supporting_evidence)
+    ) {
+      setSnackbarMessage("Invalid Google Drive link!");
       setSnackbarOpen(true);
       return;
     }
     try {
       await axios.put(
-        `https://iflab-logbook-backend.onrender.com/${currentLogbook.id}/`,
+        `https://iflab-logbook-backend.onrender.com/logbooks/${currentLogbook.id}/`,
         currentLogbook,
         { withCredentials: true }
       );
@@ -134,7 +147,6 @@ const LogbookPage = () => {
     }
   };
 
-  // Fungsi untuk menghapus logbook
   const handleDeleteLogbook = async (id) => {
     if (!id) {
       setSnackbarMessage("Logbook ID is missing.");
@@ -158,6 +170,11 @@ const LogbookPage = () => {
     }
   };
 
+  const isValidURL = (url) => {
+    const regex = /^(https:\/\/drive\.google\.com\/file\/d\/[^/]+\/view)$/;
+    return regex.test(url);
+  };
+
   const filteredLogbooks = logbooks.filter((logbook) =>
     logbook.activity.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -178,7 +195,6 @@ const LogbookPage = () => {
             Logbooks
           </Typography>
 
-
           <Button
             variant="contained"
             color="primary"
@@ -196,15 +212,14 @@ const LogbookPage = () => {
                   <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>End Date</TableCell>
                   <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Activity</TableCell>
                   <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>PIC</TableCell>
+                  <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Supporting Evidence</TableCell>
                   <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Status</TableCell>
                   <TableCell sx={{ color: "#fff", fontWeight: "bold" }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filteredLogbooks.length > 0 ? (
-                  
                   filteredLogbooks.map((logbook) => (
-                    
                     <TableRow
                       key={logbook.id}
                       sx={{
@@ -216,13 +231,22 @@ const LogbookPage = () => {
                       <TableCell>{logbook.end_date}</TableCell>
                       <TableCell>{logbook.activity}</TableCell>
                       <TableCell>{logbook.pic}</TableCell>
+                      <TableCell>
+                        {logbook.supporting_evidence ? (
+                          <a
+                            href={logbook.supporting_evidence}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: "none", color: "blue" }}
+                          >
+                            View Evidence
+                          </a>
+                        ) : (
+                          "No Evidence"
+                        )}
+                      </TableCell>
                       <TableCell>{logbook.status}</TableCell>
                       <TableCell>
-                        {/* <Tooltip title="Edit">
-                          <IconButton color="primary" onClick={() => handleOpenEditModal(logbook)}>
-                            <Edit />
-                          </IconButton>
-                        </Tooltip> */}
                         <Tooltip title="Delete">
                           <IconButton color="error" onClick={() => handleDeleteLogbook(logbook.id)}>
                             <Delete />
@@ -233,7 +257,7 @@ const LogbookPage = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} sx={{ textAlign: "center" }}>
+                    <TableCell colSpan={7} sx={{ textAlign: "center" }}>
                       No logbooks found
                     </TableCell>
                   </TableRow>
@@ -244,7 +268,6 @@ const LogbookPage = () => {
         </Box>
       )}
 
-      {/* Modal Tambah Data */}
       <Modal open={openAddModal} onClose={() => setOpenAddModal(false)}>
         <Box
           sx={{
@@ -298,7 +321,6 @@ const LogbookPage = () => {
             value={newLogbook.pic}
             onChange={(e) => setNewLogbook({ ...newLogbook, pic: e.target.value })}
             sx={{ marginBottom: 2 }}
-            SelectProps={{ native: false }}
             helperText="Please select PIC"
           >
             {picOptions.map((pic) => (
@@ -307,13 +329,21 @@ const LogbookPage = () => {
               </MenuItem>
             ))}
           </TextField>
+          <TextField
+            fullWidth
+            label="Supporting Evidence (Google Drive Link)"
+            name="supporting_evidence"
+            value={newLogbook.supporting_evidence}
+            onChange={(e) => setNewLogbook({ ...newLogbook, supporting_evidence: e.target.value })}
+            sx={{ marginBottom: 2 }}
+            helperText="Provide a valid Google Drive link"
+          />
           <Button variant="contained" color="primary" onClick={handleAddLogbook} fullWidth>
             Submit
           </Button>
         </Box>
       </Modal>
 
-      {/* Modal Edit Data */}
       <Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
         <Box
           sx={{
@@ -339,7 +369,9 @@ const LogbookPage = () => {
                 name="start_date"
                 type="date"
                 value={currentLogbook.start_date}
-                onChange={(e) => setCurrentLogbook({ ...currentLogbook, start_date: e.target.value })}
+                onChange={(e) =>
+                  setCurrentLogbook({ ...currentLogbook, start_date: e.target.value })
+                }
                 sx={{ marginBottom: 2 }}
                 InputLabelProps={{ shrink: true }}
               />
@@ -349,7 +381,9 @@ const LogbookPage = () => {
                 name="end_date"
                 type="date"
                 value={currentLogbook.end_date}
-                onChange={(e) => setCurrentLogbook({ ...currentLogbook, end_date: e.target.value })}
+                onChange={(e) =>
+                  setCurrentLogbook({ ...currentLogbook, end_date: e.target.value })
+                }
                 sx={{ marginBottom: 2 }}
                 InputLabelProps={{ shrink: true }}
               />
@@ -358,7 +392,9 @@ const LogbookPage = () => {
                 label="Activity"
                 name="activity"
                 value={currentLogbook.activity}
-                onChange={(e) => setCurrentLogbook({ ...currentLogbook, activity: e.target.value })}
+                onChange={(e) =>
+                  setCurrentLogbook({ ...currentLogbook, activity: e.target.value })
+                }
                 sx={{ marginBottom: 2 }}
               />
               <TextField
@@ -369,7 +405,6 @@ const LogbookPage = () => {
                 value={currentLogbook.pic}
                 onChange={(e) => setCurrentLogbook({ ...currentLogbook, pic: e.target.value })}
                 sx={{ marginBottom: 2 }}
-                SelectProps={{ native: false }}
               >
                 {picOptions.map((pic) => (
                   <MenuItem key={pic} value={pic}>
@@ -377,6 +412,17 @@ const LogbookPage = () => {
                   </MenuItem>
                 ))}
               </TextField>
+              <TextField
+                fullWidth
+                label="Supporting Evidence (Google Drive Link)"
+                name="supporting_evidence"
+                value={currentLogbook.supporting_evidence || ""}
+                onChange={(e) =>
+                  setCurrentLogbook({ ...currentLogbook, supporting_evidence: e.target.value })
+                }
+                sx={{ marginBottom: 2 }}
+                helperText="Provide a valid Google Drive link"
+              />
               <Button variant="contained" color="primary" onClick={handleEditLogbook} fullWidth>
                 Save Changes
               </Button>
@@ -385,7 +431,6 @@ const LogbookPage = () => {
         </Box>
       </Modal>
 
-      {/* Snackbar */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}
