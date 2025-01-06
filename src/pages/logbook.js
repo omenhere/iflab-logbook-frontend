@@ -232,7 +232,6 @@ const LogbookPage = () => {
                       <TableCell>{logbook.end_date}</TableCell>
                       <TableCell>{logbook.activity}</TableCell>
                       <TableCell>{logbook.pic}</TableCell>
-                      <TableCell>{logbook.supporting_evidence}</TableCell>
                       <TableCell>
                         {logbook.supporting_evidence ? (
                           <a
