@@ -171,9 +171,10 @@ const LogbookPage = () => {
   };
 
   const isValidURL = (url) => {
-    const regex = /^(https:\/\/drive\.google\.com\/file\/d\/[^/]+\/view)$/;
+    const regex = /^(https:\/\/drive\.google\.com\/file\/d\/[^/]+\/view(\?.*)?)$/;
     return regex.test(url);
   };
+  
 
   const filteredLogbooks = logbooks.filter((logbook) =>
     logbook.activity.toLowerCase().includes(searchTerm.toLowerCase())
