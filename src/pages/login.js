@@ -27,7 +27,7 @@ const Login = ({ setIsLoggedIn }) => {
       await login(credentials);
 
       // Ambil data pengguna dari endpoint /users/profile
-      const response = await axios.get("http://localhost:8080/users/profile", {
+      const response = await axios.get("https://iflab-logbook-backend.onrender.com/users/profile", {
         withCredentials: true, // Kirim cookie dengan permintaan
       });
 

@@ -32,7 +32,7 @@ const LogbookPage = () => {
     const fetchLogbooks = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:8080/logbooks/", {
+        const response = await axios.get("https://iflab-logbook-backend.onrender.com/logbooks/", {
           withCredentials: true,
         });
 
@@ -51,7 +51,7 @@ const LogbookPage = () => {
   const handleAddLogbook = async () => {
     try {
       await axios.post(
-        "http://localhost:8080/logbooks/",
+        "https://iflab-logbook-backend.onrender.com/logbooks/",
         newLogbook,
         { withCredentials: true }
       );
@@ -64,7 +64,7 @@ const LogbookPage = () => {
         pic: "",
         status: "pending", // Reset ke default
       });
-      const response = await axios.get("http://localhost:8080/logbooks/", {
+      const response = await axios.get("https://iflab-logbook-backend.onrender.com/logbooks/", {
         withCredentials: true,
       });
       setLogbooks(response.data.data);
