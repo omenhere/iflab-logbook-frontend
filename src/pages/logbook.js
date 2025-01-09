@@ -48,7 +48,7 @@ const LogbookPage = () => {
   const fetchLogbooks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://iflab-logbook-backend.onrender.com/logbooks/", {
+      const response = await axios.get("https://iflab-backend-v2.onrender.com/api/logbooks", {
         withCredentials: true,
       });
       setLogbooks(response.data.data);
@@ -78,7 +78,7 @@ const LogbookPage = () => {
       return;
     }
     try {
-      await axios.post("https://iflab-logbook-backend.onrender.com/logbooks/", newLogbook, {
+      await axios.post("https://iflab-backend-v2.onrender.com/api/logbooks", newLogbook, {
         withCredentials: true,
       });
       setSnackbarMessage("Logbook added successfully!");
@@ -131,7 +131,7 @@ const LogbookPage = () => {
     }
     try {
       await axios.put(
-        `https://iflab-logbook-backend.onrender.com/logbooks/${currentLogbook.id}/`,
+        `https://iflab-backend-v2.onrender.com/api/logbooks/${currentLogbook.id}/`,
         currentLogbook,
         { withCredentials: true }
       );
@@ -157,7 +157,7 @@ const LogbookPage = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`https://iflab-logbook-backend.onrender.com/logbooks/${id}`, {
+      await axios.delete(`https://iflab-backend-v2.onrender.com/api/logbooks/011c8f8a-5b57-4f47-8d25-b5e3b4d8df9f/${id}`, {
         withCredentials: true,
       });
       setSnackbarMessage("Logbook deleted successfully!");

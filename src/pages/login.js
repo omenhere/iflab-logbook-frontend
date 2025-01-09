@@ -22,26 +22,21 @@ const Login = ({ setIsLoggedIn }) => {
     setError("");
 
     try {
-      // Kirim data login ke endpoint backend
       const response = await axios.post(
-        "https://iflab-logbook-backend.onrender.com/login",
+        "https://iflab-backend-v2.onrender.com/api/auth/login",
         credentials,
         {
-          withCredentials: true, // Kirim cookie bersama permintaan
+          withCredentials: true,
         }
       );
 
-      // Cek respons untuk memastikan login berhasil
       if (response.data && response.data.user) {
-        const { name } = response.data.user; // Ambil data pengguna dari respons
+        const { name } = response.data.user; 
 
-        // Simpan data pengguna di localStorage
         localStorage.setItem("name", name);
 
-        // Perbarui state isLoggedIn
         setIsLoggedIn(true);
 
-        // Redirect ke dashboard
         navigate("/dashboard");
       } else {
         throw new Error("Invalid login credentials");
