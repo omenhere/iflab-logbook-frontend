@@ -37,7 +37,7 @@ const Layout = ({ setIsLoggedIn }) => { // Tambahkan setIsLoggedIn sebagai prop
   const handleLogout = async () => {
     try {
       // Panggil endpoint logout
-      await axios.post("https://iflab-logbook-backend.onrender.com/logout", {}, {
+      await axios.post("https://iflab-backend-v2.onrender.com/api/auth/logout", {}, {
         withCredentials: true, // Pastikan cookie dikirimkan
       });
   
