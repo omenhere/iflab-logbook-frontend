@@ -157,7 +157,7 @@ const LogbookPage = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`https://iflab-backend-v2.onrender.com/api/logbooks/011c8f8a-5b57-4f47-8d25-b5e3b4d8df9f/${id}`, {
+      await axios.delete(`https://iflab-backend-v2.onrender.com/api/logbooks/${id}`, {
         withCredentials: true,
       });
       setSnackbarMessage("Logbook deleted successfully!");
