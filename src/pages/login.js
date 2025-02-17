@@ -35,6 +35,8 @@ const Login = ({ setIsLoggedIn }) => {
       
         localStorage.setItem("name", name);
         localStorage.setItem("role", role); // Menyimpan role pengguna
+
+        console.log(localStorage.getItem("role"));
       
         setIsLoggedIn(true);
       
