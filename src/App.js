@@ -26,7 +26,7 @@ function App() {
           path="/login"
           element={
             isLoggedIn ? (
-              <Navigate to="/dashboard" />
+              <Navigate to={localStorage.getItem("role") === "aslab" ? "/aslab-page" : "/dashboard"} />
             ) : (
               <Login setIsLoggedIn={setIsLoggedIn} />
             )

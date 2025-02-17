@@ -34,6 +34,7 @@ const Login = ({ setIsLoggedIn }) => {
         const { name, role } = response.data.user; // Extract role along with name
       
         localStorage.setItem("name", name);
+        localStorage.setItem("role", role); // Menyimpan role pengguna
       
         setIsLoggedIn(true);
       
