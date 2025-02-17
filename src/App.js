@@ -4,7 +4,7 @@ import Layout from "./components/layout";
 import Dashboard from "./pages/dashboard";
 import Logbook from "./pages/logbook";
 import Login from "./pages/login";
-import AslabPage from "./pages/aslab"; // Ensure this component is created
+import AslabPage from "./pages/aslabPage"; // Ensure this component is created
 
 const ProtectedRoute = ({ element: Component, isLoggedIn }) => {
   return isLoggedIn ? Component : <Navigate to="/login" />;
