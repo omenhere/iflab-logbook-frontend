@@ -4,7 +4,6 @@ import Layout from "./components/layout";
 import Dashboard from "./pages/dashboard";
 import Logbook from "./pages/logbook";
 import Login from "./pages/login";
-import AslabPage from "./pages/aslabPage"; // Ensure this component is created
 
 const ProtectedRoute = ({ element: Component, isLoggedIn }) => {
   return isLoggedIn ? Component : <Navigate to="/login" />;
@@ -26,7 +25,7 @@ function App() {
           path="/login"
           element={
             isLoggedIn ? (
-              <Navigate to={localStorage.getItem("role") === "aslab" ? "/aslab-page" : "/dashboard"} />
+              <Navigate to="/dashboard" />
             ) : (
               <Login setIsLoggedIn={setIsLoggedIn} />
             )
@@ -47,12 +46,6 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="logbooks" element={<Logbook />} />
         </Route>
-
-        {/* Aslab page route */}
-        <Route
-          path="/aslab-page"
-          element={<AslabPage />}  // Add this route for Aslab role
-        />
       </Routes>
     </Router>
   );

@@ -29,28 +29,18 @@ const Login = ({ setIsLoggedIn }) => {
           withCredentials: true,
         }
       );
-      
-      if (response.data && response.data.user) {
-        const { name, role } = response.data.user; // Extract role along with name
-      
-        localStorage.setItem("name", name);
-        localStorage.setItem("role", role); // Menyimpan role pengguna
 
-        console.log(localStorage.getItem("role"));
-      
+      if (response.data && response.data.user) {
+        const { name } = response.data.user; 
+
+        localStorage.setItem("name", name);
+
         setIsLoggedIn(true);
-      
-        // Navigate to the appropriate page based on the role
-        if (role === "aslab") {
-          navigate("/aslab-page");  // Navigate to the Aslab page if the role is aslab
-        } else {
-          navigate("/dashboard");  // Otherwise, navigate to the dashboard
-        }
+
+        navigate("/dashboard");
       } else {
-        // Handle the case where user data is not available
-        console.error("Login failed or user data is missing.");
+        throw new Error("Invalid login credentials");
       }
-      
     } catch (error) {
       console.error("Login failed:", error);
       setError(
