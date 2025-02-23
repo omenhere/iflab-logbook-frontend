@@ -23,7 +23,7 @@ const Login = ({ setIsLoggedIn }) => {
   // URL API disesuaikan dengan role
   const apiUrlMap = {
     mahasiswa: process.env.REACT_APP_API_URL_MAHASISWA || "https://iflab-backend-v2.onrender.com/api/auth/login", // URL untuk mahasiswa
-    aslab: process.env.REACT_APP_API_URL_ASLAB || "http://localhost:3000/api/auth/loginAslab", // URL untuk aslab
+    aslab: process.env.REACT_APP_API_URL_ASLAB || "https://iflab-backend-v2.onrender.com/api/auth/loginAslab", // URL untuk aslab
   };
 
   const handleLogin = async () => {
