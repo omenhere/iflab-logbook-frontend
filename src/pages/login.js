@@ -9,10 +9,13 @@ import {
   CircularProgress,
   Alert,
   Box,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 
 const Login = ({ setIsLoggedIn }) => {
-  const [credentials, setCredentials] = useState({ nim: "", password: "" });
+  const [credentials, setCredentials] = useState({ nim: "", password: "", role: "mahasiswa" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -21,23 +24,28 @@ const Login = ({ setIsLoggedIn }) => {
     setLoading(true);
     setError("");
 
+    // Menentukan API endpoint berdasarkan role yang dipilih
+    const apiUrl =
+      credentials.role === "mahasiswa"
+        ? "https://iflab-backend-v2.onrender.com/api/auth/login" // Endpoint untuk mahasiswa
+        : "http://localhost:3000/api/auth/loginAslab"; // Endpoint untuk aslab
+
     try {
-      const response = await axios.post(
-        "https://iflab-backend-v2.onrender.com/api/auth/login",
-        credentials,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post(apiUrl, credentials, {
+        withCredentials: true,
+      });
 
       if (response.data && response.data.user) {
-        const { name } = response.data.user; 
+        const { name } = response.data.user;
 
+        // Simpan data user dan role ke localStorage
         localStorage.setItem("name", name);
+        localStorage.setItem("role", credentials.role);
 
         setIsLoggedIn(true);
 
-        navigate("/dashboard");
+        // Arahkan pengguna ke halaman dashboard sesuai role yang dipilih
+        navigate(credentials.role === "mahasiswa" ? "/dashboard" : "/aslab-dashboard");
       } else {
         throw new Error("Invalid login credentials");
       }
@@ -72,6 +80,17 @@ const Login = ({ setIsLoggedIn }) => {
       {error && <Alert severity="error">{error}</Alert>}
 
       <Box component="form" sx={{ marginTop: 2 }}>
+        {/* Pilihan role */}
+        <RadioGroup
+          row
+          value={credentials.role}
+          onChange={(e) => setCredentials({ ...credentials, role: e.target.value })}
+        >
+          <FormControlLabel value="caslab" control={<Radio />} label="Caslab" />
+          <FormControlLabel value="aslab" control={<Radio />} label="Aslab" />
+        </RadioGroup>
+
+        {/* Input NIM */}
         <TextField
           fullWidth
           label="NIM"
@@ -81,6 +100,8 @@ const Login = ({ setIsLoggedIn }) => {
           onChange={(e) => setCredentials({ ...credentials, nim: e.target.value })}
           required
         />
+
+        {/* Input Password */}
         <TextField
           fullWidth
           label="Password"
@@ -93,6 +114,8 @@ const Login = ({ setIsLoggedIn }) => {
           }
           required
         />
+
+        {/* Tombol Login */}
         <Button
           fullWidth
           variant="contained"
