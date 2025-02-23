@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios"; // Untuk memanggil API
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -20,34 +20,43 @@ const Login = ({ setIsLoggedIn }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // URL API disesuaikan dengan role
+  const apiUrlMap = {
+    mahasiswa: process.env.REACT_APP_API_URL_MAHASISWA || "https://iflab-backend-v2.onrender.com/api/auth/login", // URL untuk mahasiswa
+    aslab: process.env.REACT_APP_API_URL_ASLAB || "http://localhost:3000/api/auth/loginAslab", // URL untuk aslab
+  };
+
   const handleLogin = async () => {
     setLoading(true);
-    setError("");
+    setError(""); // Reset error message
 
-    // Menentukan API endpoint berdasarkan role yang dipilih
-    const apiUrl =
-      credentials.role === "mahasiswa"
-        ? "https://iflab-backend-v2.onrender.com/api/auth/login" // Endpoint untuk mahasiswa
-        : "http://localhost:3000/api/auth/loginAslab"; // Endpoint untuk aslab
+    const { role, nim, password } = credentials;
+
+    if (!nim || !password) {
+      setError("Please enter both NIM and Password.");
+      setLoading(false);
+      return;
+    }
+
+    // Cek URL yang akan dipakai
+    console.log("API URL:", apiUrlMap[role]); // Cek apakah URL yang dipilih sudah sesuai
+
+    const apiUrl = apiUrlMap[role]; // Pilih API berdasarkan role yang dipilih
 
     try {
-      const response = await axios.post(apiUrl, credentials, {
-        withCredentials: true,
-      });
+      const response = await axios.post(apiUrl, { nim, password }, { withCredentials: true });
 
       if (response.data && response.data.user) {
         const { name } = response.data.user;
-
-        // Simpan data user dan role ke localStorage
         localStorage.setItem("name", name);
-        localStorage.setItem("role", credentials.role);
+        localStorage.setItem("role", role);
 
         setIsLoggedIn(true);
 
-        // Arahkan pengguna ke halaman dashboard sesuai role yang dipilih
-        navigate(credentials.role === "mahasiswa" ? "/dashboard" : "/aslab-dashboard");
+        // Arahkan ke halaman dashboard yang sesuai dengan role
+        navigate(role === "mahasiswa" ? "/dashboard" : "/aslab-dashboard");
       } else {
-        throw new Error("Invalid login credentials");
+        setError("Invalid login credentials");
       }
     } catch (error) {
       console.error("Login failed:", error);
@@ -84,9 +93,12 @@ const Login = ({ setIsLoggedIn }) => {
         <RadioGroup
           row
           value={credentials.role}
-          onChange={(e) => setCredentials({ ...credentials, role: e.target.value })}
+          onChange={(e) => {
+            setCredentials({ ...credentials, role: e.target.value });
+            console.log("Role changed to:", e.target.value); // Cek apakah role berubah dengan benar
+          }}
         >
-          <FormControlLabel value="caslab" control={<Radio />} label="Caslab" />
+          <FormControlLabel value="mahasiswa" control={<Radio />} label="Mahasiswa" />
           <FormControlLabel value="aslab" control={<Radio />} label="Aslab" />
         </RadioGroup>
 
@@ -109,9 +121,7 @@ const Login = ({ setIsLoggedIn }) => {
           placeholder="Enter your password"
           margin="normal"
           value={credentials.password}
-          onChange={(e) =>
-            setCredentials({ ...credentials, password: e.target.value })
-          }
+          onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
           required
         />
 
