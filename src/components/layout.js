@@ -21,7 +21,7 @@ import {
 } from "@mui/icons-material";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
-const Layout = ({ setIsLoggedIn }) => { // Tambahkan setIsLoggedIn sebagai prop
+const Layout = ({ setIsLoggedIn }) => { 
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const navigate = useNavigate();
@@ -36,18 +36,15 @@ const Layout = ({ setIsLoggedIn }) => { // Tambahkan setIsLoggedIn sebagai prop
 
   const handleLogout = async () => {
     try {
-      // Panggil endpoint logout
       await axios.post("https://iflab-backend-v2.onrender.com/api/auth/logout", {}, {
-        withCredentials: true, // Pastikan cookie dikirimkan
+        withCredentials: true, 
       });
   
-      localStorage.removeItem("name"); // Hapus data nama atau informasi pengguna lain
+      localStorage.removeItem("name"); 
     
   
-      // Update status login
       setIsLoggedIn(false);
   
-      // Redirect ke halaman login
       navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
