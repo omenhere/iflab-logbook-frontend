@@ -47,7 +47,7 @@ const Login = ({ setIsLoggedIn }) => {
       const response = await axios.post(apiUrl, { nim, password }, { withCredentials: true });
 
       if (apiUrl.includes("loginAslab")) {
-        navigate("/aslab-dashboard");
+        navigate("/dashboardAslab"); // Redirect ke dashboard aslab
       } else {
         navigate("/dashboard");
       }
