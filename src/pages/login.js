@@ -46,12 +46,17 @@ const Login = ({ setIsLoggedIn }) => {
     try {
       const response = await axios.post(apiUrl, { nim, password }, { withCredentials: true });
 
-      localStorage.setItem("lastLoginApi", apiUrl); // simpan di Login.jsx
+      if (response.data && response.data.user) {
+        const { name } = response.data.user;
+        localStorage.setItem("name", name);
+        localStorage.setItem("role", role);
 
-      if (apiUrl.includes("loginAslab")) {
-        navigate("/dashboardAslab"); // Redirect ke dashboard aslab
+        setIsLoggedIn(true);
+
+        // Arahkan ke halaman dashboard yang sesuai dengan role
+        navigate(role === "mahasiswa" ? "/dashboard" : "/dashboardAslab");
       } else {
-        navigate("/dashboard");
+        setError("Invalid login credentials");
       }
     } catch (error) {
       console.error("Login failed:", error);

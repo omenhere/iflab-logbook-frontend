@@ -6,7 +6,6 @@ import Logbook from "./pages/logbook";
 import Login from "./pages/login";
 import DashboardAslab from "./pages/dashboardAslab";
 
-
 const ProtectedRoute = ({ element: Component, isLoggedIn }) => {
   return isLoggedIn ? Component : <Navigate to="/login" />;
 };
@@ -27,7 +26,7 @@ function App() {
           path="/login"
           element={
             isLoggedIn ? (
-              localStorage.getItem("lastLoginApi")?.includes("loginAslab")
+              localStorage.getItem("role") === "aslab"
                 ? <Navigate to="/dashboardAslab" />
                 : <Navigate to="/dashboard" />
             ) : (
@@ -36,14 +35,13 @@ function App() {
           }
         />
 
-
         {/* Redirect root path */}
         <Route
           path="/"
           element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
         />
 
-        {/* Dashboard route */}
+        {/* Dashboard mahasiswa */}
         <Route
           path="/dashboard"
           element={<ProtectedRoute element={<Layout setIsLoggedIn={setIsLoggedIn} />} isLoggedIn={isLoggedIn} />}
@@ -52,6 +50,11 @@ function App() {
           <Route path="logbooks" element={<Logbook />} />
         </Route>
 
+        {/* Dashboard aslab */}
+        <Route
+          path="/dashboardAslab"
+          element={<ProtectedRoute element={<DashboardAslab />} isLoggedIn={isLoggedIn} />}
+        />
       </Routes>
     </Router>
   );
