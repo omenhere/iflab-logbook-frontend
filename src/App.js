@@ -4,6 +4,8 @@ import Layout from "./components/layout";
 import Dashboard from "./pages/dashboard";
 import Logbook from "./pages/logbook";
 import Login from "./pages/login";
+import DashboardAslab from "./pages/dashboardAslab";
+
 
 const ProtectedRoute = ({ element: Component, isLoggedIn }) => {
   return isLoggedIn ? Component : <Navigate to="/login" />;
@@ -46,6 +48,11 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="logbooks" element={<Logbook />} />
         </Route>
+
+        <Route
+          path="/dashboardAslab"
+          element={<ProtectedRoute element={<DashboardAslab />} isLoggedIn={isLoggedIn} />}
+        />
       </Routes>
     </Router>
   );
