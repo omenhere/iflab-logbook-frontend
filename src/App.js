@@ -27,12 +27,15 @@ function App() {
           path="/login"
           element={
             isLoggedIn ? (
-              <Navigate to="/dashboard" />
+              localStorage.getItem("lastLoginApi")?.includes("loginAslab")
+                ? <Navigate to="/dashboardAslab" />
+                : <Navigate to="/dashboard" />
             ) : (
               <Login setIsLoggedIn={setIsLoggedIn} />
             )
           }
         />
+
 
         {/* Redirect root path */}
         <Route
@@ -49,10 +52,6 @@ function App() {
           <Route path="logbooks" element={<Logbook />} />
         </Route>
 
-        <Route
-          path="/dashboardAslab"
-          element={<ProtectedRoute element={<DashboardAslab />} isLoggedIn={isLoggedIn} />}
-        />
       </Routes>
     </Router>
   );

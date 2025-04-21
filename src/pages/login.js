@@ -46,6 +46,8 @@ const Login = ({ setIsLoggedIn }) => {
     try {
       const response = await axios.post(apiUrl, { nim, password }, { withCredentials: true });
 
+      localStorage.setItem("lastLoginApi", apiUrl); // simpan di Login.jsx
+
       if (apiUrl.includes("loginAslab")) {
         navigate("/dashboardAslab"); // Redirect ke dashboard aslab
       } else {
