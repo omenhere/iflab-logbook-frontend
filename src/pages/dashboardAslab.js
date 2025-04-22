@@ -76,7 +76,7 @@ const Dashboard = () => {
       </Typography>
 
       <Typography variant="subtitle1" gutterBottom sx={{ padding: "8px 0", fontSize: "16px" }}>
-        <strong>Lab Code:</strong> {userData.code}
+        <strong>Assistant Code:</strong> {userData.code}
       </Typography>
     </Box>
   );
