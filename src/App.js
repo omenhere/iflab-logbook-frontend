@@ -6,19 +6,8 @@ import Logbook from "./pages/logbook";
 import Login from "./pages/login";
 import DashboardAslab from "./pages/dashboardAslab";
 
-// ✅ DITAMBAHKAN DI SINI - ProtectedRoute dengan role check
-const ProtectedRoute = ({ isLoggedIn, allowedRoles, children }) => {
-  const userRole = localStorage.getItem("role");
-
-  if (!isLoggedIn) {
-    return <Navigate to="/login" />;
-  }
-
-  if (allowedRoles && !allowedRoles.includes(userRole)) {
-    return <Navigate to="/login" />; // atau bisa redirect ke /unauthorized
-  }
-
-  return children;
+const ProtectedRoute = ({ element: Component, isLoggedIn }) => {
+  return isLoggedIn ? Component : <Navigate to="/login" />;
 };
 
 function App() {
@@ -32,7 +21,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Login */}
+        {/* Login route */}
         <Route
           path="/login"
           element={
@@ -46,45 +35,25 @@ function App() {
           }
         />
 
-        {/* Root */}
+        {/* Redirect root path */}
         <Route
           path="/"
           element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
         />
 
-        {/* Mahasiswa */}
+        {/* Dashboard mahasiswa */}
         <Route
           path="/dashboard"
-          element={
-            <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={["mahasiswa"]}>
-              <Layout setIsLoggedIn={setIsLoggedIn}>
-                <Dashboard />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
+          element={<ProtectedRoute element={<Layout setIsLoggedIn={setIsLoggedIn} />} isLoggedIn={isLoggedIn} />}
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="logbooks" element={<Logbook />} />
+        </Route>
 
-        <Route
-          path="/dashboard/logbooks"
-          element={
-            <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={["mahasiswa"]}>
-              <Layout setIsLoggedIn={setIsLoggedIn}>
-                <Logbook />
-              </Layout>
-            </ProtectedRoute>
-          }
-        />
-
-        {/* Aslab */}
+        {/* Dashboard aslab */}
         <Route
           path="/dashboardAslab"
-          element={
-            <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={["aslab"]}>
-              <Layout setIsLoggedIn={setIsLoggedIn}>
-                <DashboardAslab />
-              </Layout>
-            </ProtectedRoute>
-          }
+          element={<ProtectedRoute element={<DashboardAslab />} isLoggedIn={isLoggedIn} />}
         />
       </Routes>
     </Router>
