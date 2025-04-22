@@ -7,7 +7,7 @@ import Logbook from "./pages/logbook";
 import Login from "./pages/login";
 import DashboardAslab from "./pages/dashboardAslab";
 
-// 🔐 Middleware route dengan cek role
+// 🔐 Route protection + role check
 const ProtectedRoute = ({ isLoggedIn, allowedRoles, children }) => {
   const userRole = localStorage.getItem("role");
 
@@ -28,10 +28,10 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Login route - tidak auto-redirect di sini */}
+        {/* Login route */}
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
 
-        {/* Root redirect based on role */}
+        {/* Redirect root */}
         <Route
           path="/"
           element={
@@ -45,7 +45,7 @@ function App() {
           }
         />
 
-        {/* Mahasiswa Layout & Nested Routes */}
+        {/* Mahasiswa layout */}
         <Route
           path="/dashboard"
           element={
@@ -60,17 +60,19 @@ function App() {
           <Route path="logbooks" element={<Logbook />} />
         </Route>
 
-        {/* Aslab Dashboard */}
+        {/* Aslab layout with Outlet */}
         <Route
           path="/dashboardAslab"
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={["aslab"]}>
               <LayoutAslab>
-                <DashboardAslab />
+                <Outlet />
               </LayoutAslab>
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<DashboardAslab />} />
+        </Route>
       </Routes>
     </Router>
   );
