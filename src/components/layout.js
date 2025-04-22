@@ -40,7 +40,8 @@ const Layout = ({ setIsLoggedIn }) => {
         withCredentials: true, 
       });
   
-      localStorage.removeItem("name"); 
+      localStorage.removeItem("name");
+      localStorage.removeItem("role"); 
     
   
       setIsLoggedIn(false);
