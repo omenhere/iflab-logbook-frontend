@@ -6,8 +6,8 @@ import Logbook from "./pages/logbook";
 import Login from "./pages/login";
 import DashboardAslab from "./pages/dashboardAslab";
 
-const ProtectedRoute = ({ element: Component, isLoggedIn }) => {
-  return isLoggedIn ? Component : <Navigate to="/login" />;
+const ProtectedRoute = ({ isLoggedIn, children }) => {
+  return isLoggedIn ? children : <Navigate to="/login" />;
 };
 
 function App() {
@@ -41,16 +41,30 @@ function App() {
           element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
         />
 
-        {/* Dashboard mahasiswa */}
+        {/* Dashboard Mahasiswa (with nested routes) */}
         <Route
           path="/dashboard"
-          element={<ProtectedRoute element={<Layout setIsLoggedIn={setIsLoggedIn} />} isLoggedIn={isLoggedIn} />}
-        >
-          <Route index element={<Dashboard />} />
-          <Route path="logbooks" element={<Logbook />} />
-        </Route>
+          element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <Layout setIsLoggedIn={setIsLoggedIn}>
+                <Dashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Dashboard aslab */}
+        <Route
+          path="/dashboard/logbooks"
+          element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <Layout setIsLoggedIn={setIsLoggedIn}>
+                <Logbook />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Dashboard Aslab */}
         <Route
           path="/dashboardAslab"
           element={
@@ -61,7 +75,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
       </Routes>
     </Router>
   );
