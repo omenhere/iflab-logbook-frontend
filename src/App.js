@@ -53,8 +53,15 @@ function App() {
         {/* Dashboard aslab */}
         <Route
           path="/dashboardAslab"
-          element={<ProtectedRoute element={<DashboardAslab />} isLoggedIn={isLoggedIn} />}
+          element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <Layout setIsLoggedIn={setIsLoggedIn}>
+                <DashboardAslab />
+              </Layout>
+            </ProtectedRoute>
+          }
         />
+
       </Routes>
     </Router>
   );
