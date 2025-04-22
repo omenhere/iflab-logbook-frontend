@@ -65,7 +65,7 @@ function App() {
           path="/dashboardAslab"
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={["aslab"]}>
-              <LayoutAslab>
+              <LayoutAslab setIsLoggedIn={setIsLoggedIn}>
                 <Outlet />
               </LayoutAslab>
             </ProtectedRoute>
