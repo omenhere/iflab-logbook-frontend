@@ -6,8 +6,9 @@ import Dashboard from "./pages/dashboard";
 import Logbook from "./pages/logbook";
 import Login from "./pages/login";
 import DashboardAslab from "./pages/dashboardAslab";
+import { Outlet } from "react-router-dom";
 
-// 🔐 ProtectedRoute dengan pengecekan role
+// 🔐 Middleware route dengan cek role
 const ProtectedRoute = ({ isLoggedIn, allowedRoles, children }) => {
   const userRole = localStorage.getItem("role");
 
@@ -28,7 +29,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Login */}
+        {/* Login route */}
         <Route
           path="/login"
           element={
@@ -42,18 +43,20 @@ function App() {
           }
         />
 
-        {/* Default redirect */}
+        {/* Root redirect */}
         <Route
           path="/"
           element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
         />
 
-        {/* Dashboard Mahasiswa */}
+        {/* Mahasiswa Layout */}
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute isLoggedIn={isLoggedIn} allowedRoles={["mahasiswa"]}>
-              <Layout setIsLoggedIn={setIsLoggedIn} />
+              <Layout setIsLoggedIn={setIsLoggedIn}>
+                <Outlet />
+              </Layout>
             </ProtectedRoute>
           }
         >
@@ -61,7 +64,7 @@ function App() {
           <Route path="logbooks" element={<Logbook />} />
         </Route>
 
-        {/* Dashboard Aslab */}
+        {/* Aslab Layout */}
         <Route
           path="/dashboardAslab"
           element={

@@ -30,27 +30,26 @@ const Login = ({ setIsLoggedIn }) => {
     setError("");
 
     const { role, nim, password } = credentials;
+    const apiUrl = apiUrlMap[role];
 
-    if (!nim || !password) {
+    if (!nim.trim() || !password.trim()) {
       setError("Please enter both NIM and Password.");
       setLoading(false);
       return;
     }
-
-    const apiUrl = apiUrlMap[role];
 
     try {
       const response = await axios.post(apiUrl, { nim, password }, { withCredentials: true });
 
       if (response.data && response.data.user) {
         const { name, role: roleFromResponse } = response.data.user;
+        const finalRole = roleFromResponse || role;
 
         localStorage.setItem("name", name);
-        localStorage.setItem("role", roleFromResponse || role);
+        localStorage.setItem("role", finalRole);
 
         setIsLoggedIn(true);
-
-        navigate((roleFromResponse || role) === "mahasiswa" ? "/dashboard" : "/dashboardAslab");
+        navigate(finalRole === "mahasiswa" ? "/dashboard" : "/dashboardAslab");
       } else {
         setError("Invalid login credentials.");
       }
@@ -83,7 +82,6 @@ const Login = ({ setIsLoggedIn }) => {
       {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
 
       <Box component="form" sx={{ marginTop: 2 }}>
-        {/* Pilihan role */}
         <RadioGroup
           row
           value={credentials.role}
@@ -93,30 +91,22 @@ const Login = ({ setIsLoggedIn }) => {
           <FormControlLabel value="aslab" control={<Radio />} label="Aslab" />
         </RadioGroup>
 
-        {/* Input NIM */}
         <TextField
           fullWidth
           label="NIM"
-          placeholder="Enter your NIM"
           margin="normal"
           value={credentials.nim}
           onChange={(e) => setCredentials({ ...credentials, nim: e.target.value })}
-          required
         />
-
-        {/* Input Password */}
         <TextField
           fullWidth
           label="Password"
           type="password"
-          placeholder="Enter your password"
           margin="normal"
           value={credentials.password}
           onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-          required
         />
 
-        {/* Tombol Login */}
         <Button
           fullWidth
           variant="contained"
