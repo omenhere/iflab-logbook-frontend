@@ -20,15 +20,14 @@ const Login = ({ setIsLoggedIn }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // URL API disesuaikan dengan role
   const apiUrlMap = {
-    mahasiswa: process.env.REACT_APP_API_URL_MAHASISWA || "https://iflab-backend-v2.onrender.com/api/auth/login", // URL untuk mahasiswa
-    aslab: process.env.REACT_APP_API_URL_ASLAB || "https://iflab-backend-v2.onrender.com/api/auth/loginAslab", // URL untuk aslab
+    mahasiswa: process.env.REACT_APP_API_URL_MAHASISWA || "https://iflab-backend-v2.onrender.com/api/auth/login",
+    aslab: process.env.REACT_APP_API_URL_ASLAB || "https://iflab-backend-v2.onrender.com/api/auth/loginAslab",
   };
 
   const handleLogin = async () => {
     setLoading(true);
-    setError(""); // Reset error message
+    setError("");
 
     const { role, nim, password } = credentials;
 
@@ -38,31 +37,26 @@ const Login = ({ setIsLoggedIn }) => {
       return;
     }
 
-    // Cek URL yang akan dipakai
-    console.log("API URL:", apiUrlMap[role]); // Cek apakah URL yang dipilih sudah sesuai
-
-    const apiUrl = apiUrlMap[role]; // Pilih API berdasarkan role yang dipilih
+    const apiUrl = apiUrlMap[role];
 
     try {
       const response = await axios.post(apiUrl, { nim, password }, { withCredentials: true });
 
       if (response.data && response.data.user) {
-        const { name } = response.data.user;
+        const { name, role: roleFromResponse } = response.data.user;
+
         localStorage.setItem("name", name);
-        localStorage.setItem("role", role);
+        localStorage.setItem("role", roleFromResponse || role);
 
         setIsLoggedIn(true);
 
-        // Arahkan ke halaman dashboard yang sesuai dengan role
-        navigate(role === "mahasiswa" ? "/dashboard" : "/dashboardAslab");
+        navigate((roleFromResponse || role) === "mahasiswa" ? "/dashboard" : "/dashboardAslab");
       } else {
-        setError("Invalid login credentials");
+        setError("Invalid login credentials.");
       }
-    } catch (error) {
-      console.error("Login failed:", error);
-      setError(
-        error.response?.data?.message || "Login failed. Please check your credentials."
-      );
+    } catch (err) {
+      console.error("Login failed:", err);
+      setError(err.response?.data?.error || "Login failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -86,17 +80,14 @@ const Login = ({ setIsLoggedIn }) => {
         Please log in to continue
       </Typography>
 
-      {error && <Alert severity="error">{error}</Alert>}
+      {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
 
       <Box component="form" sx={{ marginTop: 2 }}>
         {/* Pilihan role */}
         <RadioGroup
           row
           value={credentials.role}
-          onChange={(e) => {
-            setCredentials({ ...credentials, role: e.target.value });
-            console.log("Role changed to:", e.target.value); // Cek apakah role berubah dengan benar
-          }}
+          onChange={(e) => setCredentials({ ...credentials, role: e.target.value })}
         >
           <FormControlLabel value="mahasiswa" control={<Radio />} label="Mahasiswa" />
           <FormControlLabel value="aslab" control={<Radio />} label="Aslab" />
