@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Layout from "./components/layout";
 import LayoutAslab from "./components/layoutAslab";
@@ -6,7 +6,6 @@ import Dashboard from "./pages/dashboard";
 import Logbook from "./pages/logbook";
 import Login from "./pages/login";
 import DashboardAslab from "./pages/dashboardAslab";
-import { Outlet } from "react-router-dom";
 
 // 🔐 Middleware route dengan cek role
 const ProtectedRoute = ({ isLoggedIn, allowedRoles, children }) => {
@@ -29,27 +28,24 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Login route */}
+        {/* Login route - tidak auto-redirect di sini */}
+        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+
+        {/* Root redirect based on role */}
         <Route
-          path="/login"
+          path="/"
           element={
             isLoggedIn ? (
               localStorage.getItem("role") === "aslab"
                 ? <Navigate to="/dashboardAslab" />
                 : <Navigate to="/dashboard" />
             ) : (
-              <Login setIsLoggedIn={setIsLoggedIn} />
+              <Navigate to="/login" />
             )
           }
         />
 
-        {/* Root redirect */}
-        <Route
-          path="/"
-          element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />}
-        />
-
-        {/* Mahasiswa Layout */}
+        {/* Mahasiswa Layout & Nested Routes */}
         <Route
           path="/dashboard"
           element={
@@ -64,7 +60,7 @@ function App() {
           <Route path="logbooks" element={<Logbook />} />
         </Route>
 
-        {/* Aslab Layout */}
+        {/* Aslab Dashboard */}
         <Route
           path="/dashboardAslab"
           element={

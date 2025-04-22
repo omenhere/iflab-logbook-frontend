@@ -30,7 +30,6 @@ const Login = ({ setIsLoggedIn }) => {
     setError("");
 
     const { role, nim, password } = credentials;
-    const apiUrl = apiUrlMap[role];
 
     if (!nim.trim() || !password.trim()) {
       setError("Please enter both NIM and Password.");
@@ -39,6 +38,7 @@ const Login = ({ setIsLoggedIn }) => {
     }
 
     try {
+      const apiUrl = apiUrlMap[role];
       const response = await axios.post(apiUrl, { nim, password }, { withCredentials: true });
 
       if (response.data && response.data.user) {
