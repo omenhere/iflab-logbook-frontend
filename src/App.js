@@ -73,6 +73,7 @@ function App() {
         >
           <Route index element={<DashboardAslab />} />
         </Route>
+
       </Routes>
     </Router>
   );
