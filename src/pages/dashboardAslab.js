@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Typography, Box, CircularProgress } from "@mui/material";
 import axios from "axios";
 
-const Dashboard = () => {
+const DashboardAslab = () => {
   const [userData, setUserData] = useState({
     nim: "",
     name: "",
@@ -82,4 +82,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardAslab;
